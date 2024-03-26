@@ -1,3 +1,22 @@
 Briefly explain the vulnerability and why the secure version prevents the vulnerability.
 Which CIA property does tampering violate?
 What additional security mechanisms can you incorporate?
+
+The vulnerability in the insecure version is a NoSQL injection. This vulnerability allows an attacker to manipulate the query to the database and potentially access or modify data they would otherwise not be permitted to view or alter. The insecure code's problem lies in the usage of user-provided input (the username in this case) directly in a MongoDB query.
+The secure version prevents this vulnerability by sanitizing user input before using it in a query. In specific, the secure version:
+Checks username type, ensuring it's a string.
+Removes non-alphanumeric characters from username, thereby averting potentially harmful injection commands.
+Confidentiality, Integrity, and Availability (CIA) are three primary properties of secure information. Tampering, as presented in the insecure version, violates the Integrity property. Integrity ensures that the data is authentic, complete, and reliable. If an attacker can inject malicious code or data (as they can with a NoSQL injection), they might alter the data's correctness, thereby violating its integrity.
+To further enhance the security, consider incorporating:
+
+Hashing Passwords: Storing the user's password in plain text, as done here, is insecure. Hashing the password before storing it can prevent an attacker from stealing user credentials if they obtain access to the database.
+
+Rate Limiting: Limiting the number of requests an individual user can make to certain endpoints can help defend against brute force attacks.
+
+Content Security Policy (CSP): Implement a CSP to avoid Cross-Site Scripting (XSS) attacks.
+
+Access Control Lists: Implementing ACLs helps ensure that only authorized users can access certain users' information.
+
+Encrypted Connections: Use HTTPS instead of HTTP to encrypt the traffic between the user and your server, protecting the data from being read or modified in transit.
+
+Input Length Limiting: Limiting the length of input provided can help prevent certain types of attacks that involve long strings of characters.

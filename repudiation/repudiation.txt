@@ -1,2 +1,28 @@
 - Briefly explain the vulnerability and why the secure version is better at preventing repudiation than the insecure version.
 - What additional security mechanisms can you incorporate to prevent such attacks?
+
+The vulnerability in the first script (insecure.js) is the lack of request logging and authentication, which is a repudiation risk. In a nutshell, repudiation risks are those where a user can deny their actions on the system because there's no way to prove otherwise.
+
+Logging: In insecure.js, there is no logging of the incoming requests. This means that if a user makes malicious requests or sends inappropriate messages, it won't be possible to track their actions or even verify who made the request. This implicates the lack of non-repudiation in the system.
+
+Authentication: On the /get-messages route, all messages can be retrieved with no verification of who is requesting these messages. This also means that any user can get access to all the messages, which hits on both confidentiality and integrity of the system.
+
+In contrast, the second script (secure.js) mitigates the repudiation by:
+
+Logging: It introduces middleware that logs every HTTP request, recording the timestamp, HTTP method, the requested URL, and the IP address of the client.
+
+Authentication: It simulates a user authentication check in the /get-messages route. Although still not fully secure (since the variable isAuthenticated is set to true as a placeholder), it hints that a proper authentication check must be in place in real scenario.
+
+Error Handling: Having a middleware that catches unhandled errors not only improves stability but also provides valuable insight if any error occurs, including security issues. This also helps to prevent repudiation, as errors can also be traced and associated with actions.
+
+To further enhance this application, some additional security mechanisms can be applied:
+
+Request Limiting: Implementing rate limiting can prevent each IP from making too many requests in too short a period.
+
+User Authentication: Actual user authentication should replace the placeholder used in secure.js.
+
+Input Validation: Besides checking for the presence of message and user, validate if they're in an expected format to guard against SQL Injection, Cross-site Scripting (XSS), etc.
+
+Data Encryption: Sensitive data, if any, should be encrypted before stored and being transferred.
+
+TLS for Transport Layer: Always ensure connections are secured with HTTPS to protect data when it is in transit.

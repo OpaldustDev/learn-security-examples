@@ -1,0 +1,25 @@
+Briefly explain the vulnerability and why the secure version prevents the
+vulnerability.
+What additional security mechanisms can you incorporate to prevent such
+attacks?
+
+The vulnerability in the first script (insecure.js) stems from the fact that it allows any user to upgrade their role in the system through the /update-role route. Specifically, this is due to the missing authentication and weak authorization checks which provide an elevation of privilege attack vector.
+In the insecure.js script, the specified userId and newRole from the request body are directly used to find the target user and update their role. Anyone can send a POST request with the userId of a regular user and the newRole set to 'admin', thereby escalating their privilege to that of an admin.
+In contrast, the second script (secure.js) mitigates this vulnerability by introducing session-based authentication:
+Inside the app.post('/update-role', ...) route, before actually updating the role, the script checks whether the user is logged in by testing if req.session.userId exists. If it doesn't, the session is considered unauthorized, and a 401 status code is returned.
+If a session exists, the script then checks whether the logged-in user is an admin in the system. This authentication check is performed by retrieving the logged-in user based on req.session.userId and checking whether their role is 'admin'.
+Additional security mechanisms you could incorporate into your application could include:
+
+Input Sanitization: Always ensure that you sanitize user inputs. This can help prevent issues like SQL injections and cross-site scripting (XSS).
+
+Implement Transport Layer Security: Always ensure that your connections are secured with HTTPS. This helps protect your data during transit.
+
+Secure Session Management: Use secure and unique session identifiers, and implement an idle timeout or absolute timeout for sessions.
+
+Use secure cookie flags: Setting the HttpOnly flag prevents the cookie from being accessed by client-side scripts, while the Secure flag ensures the cookie is only sent over HTTPS.
+
+Restrict HTTP methods: If certain HTTP methods (like DELETE or PUT) aren't needed, disable them.
+
+Use Security Headers: Implementing certain security headers like Content Security Policy (CSP), HTTP Strict Transport Security (HSTS), and X-Content-Type-Options can help improve the security of your application.
+
+Regular Patch and System Maintenance: Keeping systems and applications up to date and patched against known vulnerabilities is crucial for maintaining a secure application.
